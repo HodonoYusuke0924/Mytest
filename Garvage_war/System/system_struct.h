@@ -87,16 +87,28 @@ typedef enum {
     DRAW			//引き分け
 } Result;
 
+/*プレイヤの入力状態*/
+typedef struct {
+    bool A;
+    bool B;
+    bool X;
+    bool Y;
+    bool SL;
+    bool SR;
+    Vector stick;
+} Joycon_Input;
+
 /*プレイヤの変数*/
 typedef struct {
-    PlayerStts stts;	//プレイヤの状態
-    Result result;		//勝敗結果
-    bool throw;		    //投擲状態のフラグ
-    int cooltime;		//投擲クールタイム
-    float speed;		//速度
-    Point point;		//位置
-    Vector vector;  	//向き
-    int total_weight;   //所持品の総重量 
+    PlayerStts stts;	    //プレイヤの状態
+    Result result;		    //勝敗結果
+    bool throw;		        //投擲状態のフラグ
+    int cooltime;		    //投擲クールタイム
+    float speed;		    //速度
+    Point point;		    //位置
+    Vector vector;  	    //向き
+    int total_weight;       //所持品の総重量 
+    Joycon_Input button;    //入力
 } Player_Flex_Info;
 
 /*フィールド名*/
