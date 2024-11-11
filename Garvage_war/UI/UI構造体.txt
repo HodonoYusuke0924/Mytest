@@ -1,0 +1,28 @@
+// 3次元座標を表す構造体
+typedef struct {
+    double x;
+    double y;
+    double z;
+} Vector3;
+
+// 画面のレイアウト
+typedef struct {
+    int width;
+    int height;
+    char backgroundImage;
+    int backgroundColor;
+} ScreenSettings;
+
+typedef struct {
+    int x, y;         // ボタンの座標
+    int width, height; // ボタンのサイズ
+    charlabel;       // ボタンに表示するテキスト
+    void (onClick)(); // ボタンクリック時の処理関数
+} Button;
+
+typedef struct {
+    int x, y;          // 表示位置
+    chartext;        // 表示するテキスト
+    int font;          // フォントサイズ
+    int color;         // テキストの色
+} Label;
