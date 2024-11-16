@@ -2,36 +2,57 @@
 ファイル名	: system_struct.h
 内容		: ゲームシステムの構造体
 *****************************************************************/
+#ifndef SYSTEM_STRUCT_H
+#define SYSTEM_STRUCT_H
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
-#include<math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <time.h>
+#include <string.h>
+
+/*使用スレッド*/
+typedef enum {
+    UT_TIMER,
+    UT_UI,
+    UT_NET,
+    UT_NUM  //スレッド数
+} USE_THREAD;
+
+/*スレッドの構造体*/
+typedef struct {
+    USE_THREAD id;      //使用するスレッド
+    pthread_t thread;
+} Thread_Info;
 
 /*三次元座標(原点を０とした絶対座標)*/
 typedef struct {
-float x;
-float y;
-float z;
+    float x;
+    float y;
+    float z;
 } Point;
 
 /*三次元方向ベクトル*/
 typedef struct {
-float vx;
-float vy;
-float vz;
+    float vx;
+    float vy;
+    float vz;
 } Vector;
 
 
 /*アイテムの持つ特殊効果*/
 typedef enum {
-IE_Noting,		//効果なし
-/*ここに特殊効果の内容*/
+    IE_Noting,		//効果なし
+    /*ここに特殊効果の内容*/
+    IE_NUM
 } ItemEffect;
 
 /*アイテムの固定値*/
 typedef struct {
-    int id			    //アイテムid
+    int id;			    //アイテムid
     char name[16];		//アイテム名
     char comment[128];	//説明
     float weight;		//重さ
@@ -50,7 +71,8 @@ typedef enum {
     IS_Having,		//プレイヤーが手に持っている
     IS_Throwing,	//投げられている
     IS_Clashing,	//衝突した
-    IS_Special		//特殊状態
+    IS_Special,		//特殊状態
+    IS_NUM
 } ItemStts;
 
 /*アイテムの変数*/
@@ -76,7 +98,8 @@ typedef enum {
     PS_Invincible,	//無敵
     PS_CantMove,	//硬直
     PS_LimitWeight,	//所持制限状態
-    PS_Special		//特殊状態
+    PS_Special,		//特殊状態
+    PS_NUM
 } PlayerStts;
 
 /*プレイヤ勝敗*/
@@ -108,13 +131,14 @@ typedef struct {
     Point point;		    //位置
     Vector vector;  	    //向き
     int total_weight;       //所持品の総重量 
-    Joycon_Input button;    //入力
+    Joycon_Input input;    //入力
 } Player_Flex_Info;
 
 /*フィールド名*/
 typedef enum {
     FN_Garbage,		    //ゴミ捨て場
     /*ここにフィールドを追加*/
+    FN_NUM
 } FieldName;
 
 /*フィールド情報*/
@@ -135,5 +159,16 @@ typedef enum {
     PRE_PHASE2,		//フェーズ２準備
     PHASE2,			//フェーズ２
     END_PHASE2,		//フェーズ２終了
-    RESULT			//リザルト
+    RESULT,			//リザルト
+    SCENE_NUM
 } SCENE;
+
+/*ゲーム情報*/
+typedef struct {
+    SCENE scene;        //シーン
+    int crient_num;     //クライアント数
+    int timer;          //タイマー
+} Game_Info;
+
+
+#endif // SYSTEM_STRUCT_H

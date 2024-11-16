@@ -1,9 +1,8 @@
 #include <joyconlib.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdbool.h>
 
 #include "system_struct.h"
+#include "system_func.h"
+
 
 joyconlib_t jc;
 
@@ -13,6 +12,7 @@ void joycon_init()
     joycon_err err = joycon_open(&jc, JOYCON_R);
     if (JOYCON_ERR_NONE != err) {
         printf("joycon open failed:%d\n", err);
+        return;
     }
 }
 
@@ -23,11 +23,10 @@ void joycon_end()
 }
 
 /*ジョイコンの向きを獲得する*/
-Vector joycon_axis(void)
+Vector joycon_vector()
 {
     Vector axis;
 
-    int flg  = 1;
     float tx = 0, ty = 0, tz = 0;
 
     joycon_get_state(&jc);
@@ -66,7 +65,7 @@ Vector joycon_axis(void)
     return axis;
 }
 
-Joycon_Input joycon_command()
+Joycon_Input joycon_input()
 {
     Joycon_Input input = {false,false,false,false,false,false, {0,0,0,}};
 
@@ -91,9 +90,9 @@ Joycon_Input joycon_command()
         input.SR = true;
     }
 
-    input.stick.x = jc.stick.x;
-    input.stick.y = jc.stick.y;
-    input.stick.z = 0;
+    input.stick.vx = jc.stick.x;
+    input.stick.vy = jc.stick.y;
+    input.stick.vz = 0;
 
     return input;
 }
