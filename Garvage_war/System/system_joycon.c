@@ -94,5 +94,8 @@ Joycon_Input joycon_input()
     input.stick.vy = jc.stick.y;
     input.stick.vz = 0;
 
+    if(jc.button.btn.Home){
+        mainloop = false;
+    }
     return input;
 }
