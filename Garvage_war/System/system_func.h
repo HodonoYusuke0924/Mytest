@@ -2,6 +2,9 @@
 
 /*ここに各ファイルの必要な関数を記載*/
 
+/*main.c*/
+extern bool mainloop;
+
 /*system_joycon.c*/
 extern void joycon_init(void);
 extern void joycon_end(void);

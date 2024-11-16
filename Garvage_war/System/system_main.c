@@ -1,6 +1,6 @@
 /*****************************************************************
-ファイル名	: system_main.h
-内容		: ゲームシステムの構造体
+ファイル名	: system_main.c
+内容	    : システムの各シーン処理 
 *****************************************************************/
 
 #include "system_struct.h"
@@ -39,12 +39,9 @@ void system_title(Player_Flex_Info player)
     player.input = joycon_input();
 
     if(memcmp(&compare.input, &player.input, sizeof(Joycon_Input))){
-        printf("A : %d\n", player.input.A);
-        printf("B : %d\n", player.input.B);
-        printf("X : %d\n", player.input.X);
-        printf("Y : %d\n", player.input.Y);
-        printf("SL: %d\n", player.input.SL);
-        printf("SR: %d\n", player.input.SR);
-        printf("x : %f, y : %f\n", player.input.stick.vx, player.input.stick.vy);
+        printf("\rA: %d, B: %d, X: %d, Y: %d, SL: %d, SR: %d, Stick: (%.2f, %.2f)        ",
+            player.input.A, player.input.B, player.input.X, player.input.Y,
+            player.input.SL, player.input.SR, player.input.stick.vx, player.input.stick.vy);
+        fflush(stdout);
     }
 }
