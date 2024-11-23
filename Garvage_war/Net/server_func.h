@@ -15,4 +15,7 @@ extern int RecvIntData(int pos,int *intData);
 extern void SendData(int pos,void *data,int dataSize);
 extern int SendRecvManager(void);
 
+/* server_command.c */
+extern int ExecuteCommand(char command,int pos);
+
 #endif

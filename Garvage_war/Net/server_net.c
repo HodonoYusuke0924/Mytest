@@ -1,6 +1,6 @@
 /*****************************************************************
 ファイル名	: server_net.c
-機能		: サーバーのネットワーク処理を行う
+機能		: サーバーのネットワーク処理
 *****************************************************************/
 
 #include"server_common.h"
@@ -8,7 +8,6 @@
 #include<sys/socket.h>
 #include<netinet/in.h>
 #include<netdb.h>
-#include<unistd.h>
 
 /* クライアントを表す構造体 */
 typedef struct{
@@ -90,7 +89,7 @@ int SetUpServer(int num)
 
 /*****************************************************************
 関数名	: SendRecvManager
-機能	: サーバーから送られてきたデータを処理する(送られてきたコマンドがグー・チョキ・パーのものであればコマンド処理を実行)
+機能	: サーバーから送られてきたデータを処理する
 引数	: なし
 出力	: プログラム終了コマンドが送られてきた時0を返す．
 		  それ以外は1を返す
@@ -119,7 +118,6 @@ int SendRecvManager(void)
 	    	if(endFlag == 0)break;
 		}
     }
-    
     return endFlag;
 }
 
@@ -167,12 +165,10 @@ void SendData(int pos,void *data,int dataSize)
 		for(i=0;i<gClientNum;i++){
 			write(gClients[i].fd,data,dataSize);
 		}
-	printf("send...\n");
     }
     else{
 		write(gClients[pos].fd,data,dataSize);
     }
-    
 }
 
 /*****************************************************************

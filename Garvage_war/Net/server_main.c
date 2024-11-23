@@ -1,6 +1,6 @@
 /*****************************************************************
-ãƒ•ã‚¡ã‚¤ãƒ«å	: server_main.c
-æ©Ÿèƒ½		: ã‚µãƒ¼ãƒãƒ¼ã®ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒãƒ³
+¥Õ¥¡¥¤¥ëÌ¾	: server_main.c
+µ¡Ç½		: ¥µ¡¼¥Ğ¡¼¤Î¥á¥¤¥ó¥ë¡¼¥Á¥ó
 *****************************************************************/
 
 #include<SDL2/SDL.h>
@@ -13,7 +13,7 @@ int main(int argc,char *argv[])
 	int	num;
 	int	endFlag = 1;
 
-	/* å¼•ãæ•°ãƒã‚§ãƒƒã‚¯ */
+	/* °ú¤­¿ô¥Á¥§¥Ã¥¯ */
 	if(argc != 2){
 		fprintf(stderr,"Usage: number of clients\n");
 		exit(-1);
@@ -23,41 +23,40 @@ int main(int argc,char *argv[])
 		exit(-1);
 	}
 	
-	/* SDLã®åˆæœŸåŒ– */
+	/* SDL¤Î½é´ü²½ */
 	if(SDL_Init(SDL_INIT_TIMER) < 0) {
 		printf("failed to initialize SDL.\n");
 		exit(-1);
 	}
 
-	/* ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã¨ã®æ¥ç¶š */
+	/* ¥¯¥é¥¤¥¢¥ó¥È¤È¤ÎÀÜÂ³ */
 	if(SetUpServer(num) == -1){
 		fprintf(stderr,"Cannot setup server\n");
 		exit(-1);
 	}
 	
-	/* å‰²ã‚Šè¾¼ã¿å‡¦ç†ã®ã‚»ãƒƒãƒˆ */
+	/* ³ä¤ê¹ş¤ß½èÍı¤Î¥»¥Ã¥È */
 	SDL_AddTimer(5000,SignalHandler,NULL);
 	
-	/* ãƒ¡ã‚¤ãƒ³ã‚¤ãƒ™ãƒ³ãƒˆãƒ«ãƒ¼ãƒ— */
+	/* ¥á¥¤¥ó¥¤¥Ù¥ó¥È¥ë¡¼¥× */
 	while(endFlag){
 		endFlag = SendRecvManager();
 	};
 
-	/* çµ‚äº†å‡¦ç† */
+	/* ½ªÎ»½èÍı */
 	Ending();
 
 	return 0;
 }
 
 /*****************************************************************
-é–¢æ•°å  : SignalHandler
-æ©Ÿèƒ½    : å‰²ã‚Šè¾¼ã¿ç”¨é–¢æ•° 
-å¼•æ•°    : Uint32	interval	: ã‚¿ã‚¤ãƒãƒ¼
-		  void		*param		: å‰²ã‚Šè¾¼ã¿å‡¦ç†ã®å¼•æ•°
-å‡ºåŠ›    : ã‚¿ã‚¤ãƒãƒ¼ã®æ¬¡ã®é–“éš”
+´Ø¿ôÌ¾  : SignalHandler
+µ¡Ç½    : ³ä¤ê¹ş¤ßÍÑ´Ø¿ô 
+°ú¿ô    : Uint32	interval	: ¥¿¥¤¥Ş¡¼
+		  void		*param		: ³ä¤ê¹ş¤ß½èÍı¤Î°ú¿ô
+½ĞÎÏ    : ¥¿¥¤¥Ş¡¼¤Î¼¡¤Î´Ö³Ö
 *****************************************************************/
 static Uint32 SignalHandler(Uint32 interval, void *param)
 {
-
 	return interval;
 }

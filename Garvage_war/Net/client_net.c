@@ -7,9 +7,6 @@
 #include"client_func.h"
 #include<sys/socket.h>
 #include<netdb.h>
-#include<unistd.h>
-#include<arpa/inet.h>
-
 
 #define	BUF_SIZE	100
 
@@ -87,6 +84,7 @@ int SetUpClient(char *hostName,int *clientID,int *num,char clientNames[][MAX_NAM
 機能	: サーバーから送られてきたデータを処理する
 引数	: なし
 出力	: プログラム終了コマンドが送られてきた時0を返す．
+		  それ以外は1を返す
 *****************************************************************/
 int SendRecvManager(void)
 {
@@ -94,7 +92,6 @@ int SendRecvManager(void)
     char	command;
     int		i;
     int		endFlag = 1;
-    int resultjudge;//結果判別用
     struct timeval	timeout;
 
     /* select()の待ち時間を設定する */
@@ -107,13 +104,9 @@ int SendRecvManager(void)
     if(FD_ISSET(gSocket,&readOK)){
 		/* サーバーからデータが届いていた */
     	/* コマンドを読み込む */
-		endFlag = ExecuteCommand(command, 2);//終了
-    	   }
-		}
+		RecvData(&command,sizeof(char));
     	/* コマンドに対する処理を行う */
-    		else{
-		    endFlag = ExecuteCommand(command, 2);//終了
-    	   }
+		endFlag = ExecuteCommand(command);
     }
     return endFlag;
 }
@@ -165,6 +158,9 @@ void CloseSoc(void)
     close(gSocket);
 }
 
+/*****
+static
+*****/
 /*****************************************************************
 関数名	: GetAllName
 機能	: サーバーから全クライアントのユーザー名を受信する
