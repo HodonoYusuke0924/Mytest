@@ -4,12 +4,9 @@
 #endif
 
 #include <math.h>
-#include <pthread.h>
 
 #include "ui.h"
 #include "type.h"
-#include "logic.h"
-
 
 #define Pai 3.1415926
 static float r = 0.0f; // ポリゴンの回転角
@@ -120,51 +117,11 @@ void DrawPoint(float map_radius, int map_center_x, int map_center_y, int point_x
     }
 }
 
-//メイン画面
-void drawMain(float r, float g, float b){
-    glColor3f(r, g, b);
-    glBegin(GL_POLYGON);
-        glVertex2f(-1.0, -0.9);//左下
-        glVertex2f(-1.0, 0.5);//左上
-        glVertex2f(0.5, 0.5);//右上
-        glVertex2f(0.5, -0.9);//右下
-    glEnd();
-}
-
-void drawEnemy(float x, float y, float size){
-    glColor3f(1.0, 0.0, 0.0);
-    glBegin(GL_POLYGON);
-        glVertex2f(x - size, y - size);
-        glVertex2f(x - size, y + size);
-        glVertex2f(x + size, y + size);
-        glVertex2f(x + size, y - size);
-    glEnd();
-}
-
 void updateUI() {
-    pthread_mutex_lock(&phase_mutex);
-    
-    // 背景色（全体のクリアカラー）
-    glClearColor(0.0, 0.0, 0.0, 1.0); // 黒色
+    pthread_mutex_lock(&data_mutex);
+
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // フェーズに応じたメイン画面の色設定
-    if (game_phase == 1) {
-        drawMain(0.0f, 0.5f, 1.0f); // フェーズ1の色
-    } else if (game_phase == 2) {
-        drawMain(1.0f, 0.5f, 0.0f); // フェーズ2の色
-    
-
-    // フェーズ2追加
-    drawEnemy(0.2f, -0.2f, 0.1f); // 位置(x, y) = (0.2, -0.2), サイズ = 0.1
-
-    // 他のUI要素をフェーズ2に変更
-    glColor3f(0.8, 0.0, 0.0);
-    Rect phase2_special_bar = {-1.0, 0.4, 0.1, 0.5};
-    Rect2DFill(phase2_special_bar);
-    }
-
-     if (game_phase == 2){
     // プレイヤーHPバー
     glColor3f(0.0, 1.0, 0.0);
     Rect player_hp_bar = {-1.0, 0.6, 0.1, player_hp * 0.7};
@@ -175,19 +132,22 @@ void updateUI() {
     Rect enemy_hp_bar = {-0.2, 0.6, 0.1, enemy_hp * 0.7};
     Rect2DFill(enemy_hp_bar);
 
-    // ラベル表示
+    // HPバー
     glColor3f(0.0, 1.0, 0.0);
     drawText(-0.2, 0.75, "ENEMY");
+
+    glColor3f(0.0, 1.0, 0.0);
     drawText(-1.0, 0.75, "YOU");
-     }
 
-     glutSwapBuffers();
-
-     pthread_mutex_unlock(&phase_mutex);
-
-    // 他のUI要素の描画（メインやマップ）
     //メイン画面
-   
+    glColor3f(0.0, 0.5, 1.0);
+    glBegin(GL_POLYGON);
+        glVertex2f(-1.0, -0.9);//左下
+        glVertex2f(-1.0, 0.5);//左上
+        glVertex2f(0.5, 0.5);//右上
+        glVertex2f(0.5, -0.9);//右下
+    glEnd();
+
     //アイテム
     glColor3f(0.0, 1.0, 0.0);
     glBegin(GL_POLYGON);
@@ -197,25 +157,29 @@ void updateUI() {
         glVertex2f(1.0, -0.9);
     glEnd();
 
-    // マップ
+    //マップ
     glColor3f(0.0, 1.0, 1.0);
     float radius = 120;
     int map_center_x = WINDOW_WIDTH - radius; // 右上の中心x
     int map_center_y = radius;                // 右上の中心y
-    Circle2DFill(radius, map_center_x, map_center_y);
+    Circle2DFill(radius, WINDOW_WIDTH-radius,radius); // 半径，円の中心のx座標，円の中心のy座標
 
-    // 点の描画
-    int point_x1 = WINDOW_WIDTH - 50;
-    int point_y1 = 100;
-    int point_x2 = WINDOW_WIDTH - 30;
-    int point_y2 = 50;
-    DrawPoint(radius, map_center_x, map_center_y, point_x1, point_y1);
-    DrawPoint(radius, map_center_x, map_center_y, point_x2, point_y2);
+    // 点の座標(動的に受け取った値で更新)
+    /*仮の座標*/
+    int point_x = WINDOW_WIDTH - 50;
+    int point_y = 100;
 
-    // その他の3D描画など
+    /*点の描画*/
+    DrawPoint(radius, map_center_x, map_center_y, point_x, point_y);
+
+    /*ビュー行列の設定*/
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    gluLookAt(0.0, 0.0, 3.0,   //視点
+              0.0, 0.0, 0.0,   //注目点
+              0.0, 1.0, 0.0);  //上方向
+    
+    /*ポリゴン描画*/
     glPushMatrix();
     glRotated(r, 0.0, 1.0, 0.0);
     glBegin(GL_TRIANGLE_STRIP);
@@ -230,9 +194,12 @@ void updateUI() {
     glEnd();
     glPopMatrix();
 
-    glutSwapBuffers(); // 描画バッファのスワップ
-}
+    glutSwapBuffers(); // ダブルバッファリング
 
+    pthread_mutex_unlock(&data_mutex);
+
+    glFlush();
+}
 
 void displayUI() {
     updateUI();
@@ -246,13 +213,8 @@ void resize(int w, int h){
     /*射影行列の設定*/
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(40, 1.0, 1.0, 80.0); // 画角、アスペクト比、前方面、後方面
+    gluPerspective(60.0, 1.0, 1.0, 100.0); // 画角、アスペクト比、前方面、後方面
 }
-void timer(int value){
-    glutPostRedisplay();
-    glutTimerFunc(16, timer, 0);
-}
-
 
 /*暇なときのアイドルイベント*/
 
