@@ -1,6 +1,6 @@
 /*****************************************************************
-е╒ебедеБE╛	: client_net.c
-╡б╟╜		: епещедевеєе╚д╬е═е├е╚еБE╝еп╜ш═¤
+е╒ебед??E?	: client_net.c
+╡б╟╜		: епещедевеєе╚д╬е═е├е╚??E╝е?╜ш═¤
 *****************************************************************/
 
 #include"common.h"
@@ -8,29 +8,32 @@
 #include<sys/socket.h>
 #include<netdb.h>
 
+#include"system_struct.h"
+#include"system_func.h"
+
 #define	BUF_SIZE	100
 
 static int	gSocket;	/* е╜е▒е├е╚ */
 static fd_set	gMask;	/* select()═╤д╬е▐е╣еп */
-static int	gWidth;		/* gMask├цд╬д╬е┴езе├епд╣д┘дне╙е├е╚┐БE*/
+static int	gWidth;		/* gMask├цд╬д╬е┴езе├епд╣д┘дне╙е├е╚??E*/
 
 static void GetAllName(int *clientID,int *num,char clientNames[][MAX_NAME_SIZE]);
 static void SetMask(void);
 static int RecvData(void *data,int dataSize);
-static void SendStructData(void *data, int dataSize);
-static int RecvStructData(void *data, int dataSize);
-static void SendPlayerFixedInfo(Player_Fixed_Info *info);
-static int RecvPlayerFixedInfo(Player_Fixed_Info *info);
-static void SendGameInfo(Game_Info *info);
-static int RecvGameInfo(Game_Info *info);
+static void client_SendStructData(int pos, void *data, int dataSize);
+static int client_RecvStructData(int pos, void *data, int dataSize);
+static void client_SendPlayerFixedInfo(int pos, Player_Fixed_Info *info);
+static int client_RecvPlayerFixedInfo(int pos, Player_Fixed_Info *info);
+static void client_SendGameInfo(int pos, Game_Info *info);
+static int client_RecvGameInfo(int pos, Game_Info *info);
 
 
 /*****************************************************************
 ┤╪┐Ї╠╛	: SetUpClient
 ╡б╟╜	: е╡б╝е╨б╝д╚д╬е│е═епе╖ечеєдЄ└▀╬йд╖бд
 		  ецб╝е╢б╝д╬╠╛┴░д╬┴ў╝ї┐одЄ╣╘дж
-░·┐БE: char	*hostName		: е█е╣е╚
-		  int	*num			: ┴┤епещедевеєе╚┐БE		  char	clientNames[][]		: ┴┤епещедевеєе╚д╬ецб╝е╢б╝╠╛
+░·??E: char	*hostName		: е█е╣е╚
+		  int	*num			: ┴┤епещедевеєе╚??E		  char	clientNames[][]		: ┴┤епещедевеєе╚д╬ецб╝е╢б╝╠╛
 ╜╨╬╧	: е│е═епе╖ечеєд╦╝║╟╘д╖д┐╗■-1,└о╕∙д╖д┐╗■0
 *****************************************************************/
 int SetUpClient(char *hostName,int *clientID,int *num,char clientNames[][MAX_NAME_SIZE])
@@ -40,7 +43,7 @@ int SetUpClient(char *hostName,int *clientID,int *num,char clientNames[][MAX_NAM
     int			len;
     char		str[BUF_SIZE];
 
-    /* е█е╣е╚╠╛длдще█е╣е╚╛Ё╩єдЄ╞└дБE*/
+    /* е█е╣е╚╠╛длдще█е╣е╚╛Ё╩єдЄ╞└??E*/
     if((servHost = gethostbyname(hostName))==NULL){
 		fprintf(stderr,"Unknown host\n");
 		return -1;
@@ -51,13 +54,13 @@ int SetUpClient(char *hostName,int *clientID,int *num,char clientNames[][MAX_NAM
     server.sin_port = htons(PORT);
     bcopy(servHost->h_addr,(char*)&server.sin_addr,servHost->h_length);
 
-    /* е╜е▒е├е╚дЄ║√▄од╣дБE*/
+    /* е╜е▒е├е╚дЄ║√▄од╣??E*/
     if((gSocket = socket(AF_INET,SOCK_STREAM,0)) < 0){
 		fprintf(stderr,"socket allocation failed\n");
 		return -1;
     }
 
-    /* е╡б╝е╨б╝д╚└▄┬│д╣дБE*/
+    /* е╡б╝е╨б╝д╚└▄┬│д╣??E*/
     if(connect(gSocket,(struct sockaddr*)&server,sizeof(server)) == -1){
 		fprintf(stderr,"cannot connect\n");
 		close(gSocket);
@@ -65,7 +68,7 @@ int SetUpClient(char *hostName,int *clientID,int *num,char clientNames[][MAX_NAM
     }
     fprintf(stderr,"connected\n");
 
-    /* ╠╛┴░дЄ╞╔д▀╣■д▀е╡б╝е╨б╝д╦┴ўдБE*/
+    /* ╠╛┴░дЄ╞╔д▀╣■д▀е╡б╝е╨б╝д╦┴ў??E*/
     do{
 		printf("Enter Your Name\n");
 		fgets(str,BUF_SIZE,stdin);
@@ -76,10 +79,10 @@ int SetUpClient(char *hostName,int *clientID,int *num,char clientNames[][MAX_NAM
 
     printf("Please Wait\n");
 
-    /* ┴┤епещедевеєе╚д╬ецб╝е╢б╝╠╛дЄ╞└дБE*/
+    /* ┴┤епещедевеєе╚д╬ецб╝е╢б╝╠╛дЄ╞└??E*/
     GetAllName(clientID,num,clientNames);
 
-    /* select()д╬д┐дсд╬е▐е╣еп├═дЄ└▀─ъд╣дБE*/
+    /* select()д╬д┐дсд╬е▐е╣еп├═дЄ└▀─ъд╣??E*/
     SetMask();
     
     return 0;
@@ -87,9 +90,9 @@ int SetUpClient(char *hostName,int *clientID,int *num,char clientNames[][MAX_NAM
 
 /*****************************************************************
 ┤╪┐Ї╠╛	: SendRecvManager
-╡б╟╜	: е╡б╝е╨б╝длдщ┴ўдщдБE╞днд┐е╟б╝е┐дЄ╜ш═¤д╣дБE░·┐БE: д╩д╖
-╜╨╬╧	: е╫е·┴░ещер╜к╬╗е│е▐еєе╔дм┴ўдщдБE╞днд┐╗■0дЄ╩╓д╣бе
-		  д╜дБE╩│░д╧1дЄ╩╓д╣
+╡б╟╜	: е╡б╝е╨б╝длдщ┴ўдщ??E╞днд┐е╟б╝е┐дЄ╜ш═?д╣??E░·??E: д╩д╖
+╜╨╬╧	: е╫?П┬╫░ещер╜?╬╗е│е▐еєе╔дм┴ўдщ??E╞днд┐╗?0дЄ╩╓д╣бе
+		  д╜??E╩│░д?1дЄ╩╓д╣
 *****************************************************************/
 int SendRecvManager(void)
 {
@@ -99,18 +102,18 @@ int SendRecvManager(void)
     int		endFlag = 1;
     struct timeval	timeout;
 
-    /* select()д╬┬╘д┴╗■┤╓дЄ└▀─ъд╣дБE*/
+    /* select()д╬┬╘д┴╗■┤╓дЄ└▀─ъд╣??E*/
     timeout.tv_sec = 0;
     timeout.tv_usec = 20;
 
     readOK = gMask;
-    /* е╡б╝е╨б╝длдще╟б╝е┐дм╞╧ддд╞дддБEл─┤д┘дБE*/
+    /* е╡б╝е╨б╝длдще╟б╝е┐дм╞╧ддд╞дд??E?─┤д┘??E*/
     select(gWidth,&readOK,NULL,NULL,&timeout);
     if(FD_ISSET(gSocket,&readOK)){
 		/* е╡б╝е╨б╝длдще╟б╝е┐дм╞╧ддд╞ддд┐ */
-    	/* е│е▐еєе╔дЄ╞╔д▀╣■дБE*/
+    	/* е│е▐еєе╔дЄ╞╔д▀╣■??E*/
 		RecvData(&command,sizeof(char));
-    	/* е│е▐еєе╔д╦┬╨д╣дБEш═¤дЄ╣╘дж */
+    	/* е│е▐еєе╔д╦┬╨д╣??Eш═?дЄ╣╘дж */
 		endFlag = ExecuteCommand(command);
     }
     return endFlag;
@@ -118,8 +121,8 @@ int SendRecvManager(void)
 
 /*****************************************************************
 ┤╪┐Ї╠╛	: RecvIntData
-╡б╟╜	: е╡б╝е╨б╝длдщint╖┐д╬е╟б╝е┐дЄ╝їд▒╝шдБE░·┐БE: int		*intData	: ╝ї┐од╖д┐е╟б╝е┐
-╜╨╬╧	: ╝їд▒╝шд├д┐е╨еде╚┐БE*****************************************************************/
+╡б╟╜	: е╡б╝е╨б╝длдщint╖┐д╬е╟б╝е┐дЄ╝їд▒╝ш??E░·??E: int		*intData	: ╝ї┐од╖д┐е╟б╝е┐
+╜╨╬╧	: ╝їд▒╝шд├д┐е╨еде╚??E*****************************************************************/
 int RecvIntData(int *intData)
 {
     int n,tmp;
@@ -133,16 +136,16 @@ int RecvIntData(int *intData)
     return n;
 }
 
-// Н\СвС╠В╠ОєРMЧp
-int RecvStructData(void *data, int dataSize) {
+// ?\?????????M?p
+int client_RecvStructData(int pos, void *data, int dataSize) {
     assert(data != NULL && dataSize > 0);
-    return RecvData(data, dataSize); // RecvDataВЁЧШЧp
+    return RecvData(data, dataSize); // RecvData?????p
 }
 
 /*****************************************************************
 ┤╪┐Ї╠╛	: SendData
-╡б╟╜	: е╡б╝е╨б╝д╦е╟б╝е┐дЄ┴ўдБE░·┐БE: void		*data		: ┴ўдБE╟б╝е┐
-		  int		dataSize	: ┴ўдБE╟б╝е┐д╬е╡еде║
+╡б╟╜	: е╡б╝е╨б╝д╦е╟б╝е┐дЄ┴ў??E░·??E: void		*data		: ┴ў??E╟б╝е?
+		  int		dataSize	: ┴ў??E╟б╝е┐д╬е╡еде?
 ╜╨╬╧	: д╩д╖
 *****************************************************************/
 void SendData(void *data,int dataSize)
@@ -154,14 +157,14 @@ void SendData(void *data,int dataSize)
     write(gSocket,data,dataSize);
 }
 
-void SendStructData(void *data, int dataSize) {
+void client_SendStructData(int pos, void *data, int dataSize) {
     assert(data != NULL && dataSize > 0);
-    SendData(data, dataSize); // SendDataВЁЧШЧp
-}
+    SendData(data, dataSize);
 
+}
 /*****************************************************************
 ┤╪┐Ї╠╛	: CloseSoc
-╡б╟╜	: е╡б╝е╨б╝д╚д╬е│е═епе╖ечеєдЄ└┌├╟д╣дБE░·┐БE: д╩д╖
+╡б╟╜	: е╡б╝е╨б╝д╚д╬е│е═епе╖ечеєдЄ└┌├╟д╣??E░·??E: д╩д╖
 ╜╨╬╧	: д╩д╖
 *****************************************************************/
 void CloseSoc(void)
@@ -175,7 +178,7 @@ static
 *****/
 /*****************************************************************
 ┤╪┐Ї╠╛	: GetAllName
-╡б╟╜	: е╡б╝е╨б╝длдщ┴┤епещедевеєе╚д╬ецб╝е╢б╝╠╛дЄ╝ї┐од╣дБE░·┐БE: int		*num			: епещедевеєе╚┐БE		  char		clientNames[][]	: ┴┤епещедевеєе╚д╬ецб╝е╢б╝╠╛
+╡б╟╜	: е╡б╝е╨б╝длдщ┴┤епещедевеєе╚д╬ецб╝е╢б╝╠╛дЄ╝ї┐од╣??E░·??E: int		*num			: епещедевеєе╚??E		  char		clientNames[][]	: ┴┤епещедевеєе╚д╬ецб╝е╢б╝╠╛
 ╜╨╬╧	: д╩д╖
 *****************************************************************/
 static void GetAllName(int *clientID,int *num,char clientNames[][MAX_NAME_SIZE])
@@ -187,7 +190,7 @@ static void GetAllName(int *clientID,int *num,char clientNames[][MAX_NAME_SIZE])
     /* епещедевеєе╚┐Їд╬╞╔д▀╣■д▀ */
     RecvIntData(num);
 
-    /* ┴┤епещедевеєе╚д╬ецб╝е╢б╝╠╛дЄ╞╔д▀╣■дБE*/
+    /* ┴┤епещедевеєе╚д╬ецб╝е╢б╝╠╛дЄ╞╔д▀╣■??E*/
     for(i=0;i<(*num);i++){
 		RecvData(clientNames[i],MAX_NAME_SIZE);
     }
@@ -202,7 +205,7 @@ static void GetAllName(int *clientID,int *num,char clientNames[][MAX_NAME_SIZE])
 
 /*****************************************************************
 ┤╪┐Ї╠╛	: SetMask
-╡б╟╜	: select()д╬д┐дсд╬е▐е╣еп├═дЄ└▀─ъд╣дБE░·┐БE: д╩д╖
+╡б╟╜	: select()д╬д┐дсд╬е▐е╣еп├═дЄ└▀─ъд╣??E░·??E: д╩д╖
 ╜╨╬╧	: д╩д╖
 *****************************************************************/
 static void SetMask(void)
@@ -217,9 +220,9 @@ static void SetMask(void)
 
 /*****************************************************************
 ┤╪┐Ї╠╛	: RecvData
-╡б╟╜	: е╡б╝е╨б╝длдще╟б╝е┐дЄ╝їд▒╝шдБE░·┐БE: void		*data		: ╝ї┐од╖д┐е╟б╝е┐
-		  int		dataSize	: ╝ї┐од╣дБE╟б╝е┐д╬е╡еде║
-╜╨╬╧	: ╝їд▒╝шд├д┐е╨еде╚┐БE*****************************************************************/
+╡б╟╜	: е╡б╝е╨б╝длдще╟б╝е┐дЄ╝їд▒╝ш??E░·??E: void		*data		: ╝ї┐од╖д┐е╟б╝е┐
+		  int		dataSize	: ╝ї┐од╣??E╟б╝е┐д╬е╡еде?
+╜╨╬╧	: ╝їд▒╝шд├д┐е╨еде╚??E*****************************************************************/
 int RecvData(void *data,int dataSize)
 {
     /* ░·дн┐Їе┴езе├еп */
@@ -230,22 +233,22 @@ int RecvData(void *data,int dataSize)
 }
 
 
-// ГvГМГCГДБ[ПюХёВЁСЧРM
-void SendPlayerFixedInfo(Player_Fixed_Info *info) {
-    SendStructData(info, sizeof(Player_Fixed_Info));
+// ?v???C???[?????????M
+void client_SendPlayerFixedInfo(int pos, Player_Fixed_Info *info) {
+    client_SendStructData(pos, info, sizeof(Player_Fixed_Info));
 }
 
-// ГvГМГCГДБ[ПюХёВЁОєРM
-int RecvPlayerFixedInfo(Player_Fixed_Info *info) {
-    return RecvStructData(info, sizeof(Player_Fixed_Info));
+// ?v???C???[?????????M
+int client_RecvPlayerFixedInfo(int pos, Player_Fixed_Info *info) {
+    return client_RecvStructData(pos, info, sizeof(Player_Fixed_Info));
 }
 
-// ГQБ[ГАПюХёВЁСЧРM
-void SendGameInfo(Game_Info *info) {
-    SendStructData(info, sizeof(Game_Info));
+// ?Q?[???????????M
+void client_SendGameInfo(int pos, Game_Info *info) {
+    client_SendStructData(pos, info, sizeof(Game_Info));
 }
 
-// ГQБ[ГАПюХёВЁОєРM
-int RecvGameInfo(Game_Info *info) {
-    return RecvStructData(info, sizeof(Game_Info));
+// ?Q?[???????????M
+int client_RecvGameInfo(int pos, Game_Info *info) {
+    return client_RecvStructData(pos, info, sizeof(Game_Info));
 }

@@ -18,6 +18,9 @@
 #include <unistd.h>
 #include <stdbool.h>
 
+#include"system_struct.h"
+#include"system_func.h"
+
 #define PORT			(u_short)8888	/* ポート番号 */
 
 #define MAX_CLIENTS		4				/* クライアント数の最大値 */

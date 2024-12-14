@@ -4,6 +4,8 @@
 #include "system_struct.h"
 #include "system_func.h"
 
+#include "client_func.h"
+
 
 joyconlib_t jc;
 
@@ -17,6 +19,7 @@ void joycon_init()
     }
     else {
         printf("joycon connected");
+        DrawJoycon();
     }
 }
 

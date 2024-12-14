@@ -19,13 +19,11 @@ extern int SendRecvManager(void);
 extern int InitWindows(int clientID,int num,char name[][MAX_NAME_SIZE]);
 extern void DestroyWindow(void);
 extern void WindowEvent(int num);
-extern void DrawRectangle(int x,int y,int width,int height);
-extern void DrawCircle(int x,int y,int r);
-extern void DrawDiamond(int x,int y,int height);
+extern void Gomain(int x,int y,int r);
+extern void DrawJoycon(void);
 
 /* client_command.c */
 extern int ExecuteCommand(char command);
-extern void SendRectangleCommand(void);
 extern void SendPositionCommand(int pos);
 extern void SendEndCommand(void);
 

@@ -41,38 +41,15 @@ int ExecuteCommand(char command)
     return endFlag;
 }
 
-/*****************************************************************
-関数名	: SendRectangleCommand
-機能	: クライアントに四角を表示させるために，
-		  サーバーにデータを送る
-引数	: なし
-出力	: なし
-*****************************************************************/
-void SendRectangleCommand(void)
-{   
-    unsigned char	data[MAX_DATA];
-    int			dataSize;
-
-#ifndef NDEBUG
-    printf("#####\n");
-    printf("SendRectangleCommand()\n");
-#endif
-    dataSize = 0;
-    /* コマンドのセット */
-    SetCharData2DataBlock(data,JOYCON_COMMAND,&dataSize);
-
-    /* データの送信 */
-    SendData(data,dataSize);
-}
 
 /*****************************************************************
-関数名	: SendCircleCommand
+関数名	: SendMainCommand
 機能	: クライアントに円を表示させるために，
 		  サーバーにデータを送る
 引数	: int		pos	    : 円を表示させるクライアント番号
 出力	: なし
 *****************************************************************/
-void SendCircleCommand(int pos)
+void SendMainCommand(int pos)
 {
     unsigned char	data[MAX_DATA];
     int			dataSize;
@@ -82,7 +59,7 @@ void SendCircleCommand(int pos)
 
 #ifndef NDEBUG
     printf("#####\n");
-    printf("SendCircleCommand()\n");
+    printf("SendMainCommand()\n");
     printf("Send Circle Command to %d\n",pos);
 #endif
 
@@ -182,7 +159,7 @@ static void RecvPositionData(void)
     RecvIntData(&y);
 
     /* 円を表示する ：要変更　受け取ったプレイヤーの座標情報を相互に表示*/
-    DrawCircle(x,y,5);
+    Gomain(x,y,5);
 }
 
 /*****************************************************************
@@ -193,33 +170,5 @@ static void RecvPositionData(void)
 *****************************************************************/
 static void RecvJoyconData(void)
 {
-    int	x,y,width,height;
 
-    /* 四角コマンドに対する引き数を受信する */
-    RecvIntData(&x);
-    RecvIntData(&y);
-    RecvIntData(&width);
-    RecvIntData(&height);
-
-    /* 四角を表示する */
-    DrawRectangle(x,y,width,height);
-}
-
-/*****************************************************************
-関数名	: RecviDiamondData
-機能	: 菱形を表示するためのデータを受信し，表示する
-引数	: なし
-出力	: なし
-*****************************************************************/
-static void RecvDiamondData(void)
-{
-    int	x,y,height;
-
-    /* 菱形コマンドに対する引き数を受信する */
-    RecvIntData(&x);
-    RecvIntData(&y);
-    RecvIntData(&height);
-
-    /* 菱形を表示する */
-    DrawDiamond(x,y,height);
 }
