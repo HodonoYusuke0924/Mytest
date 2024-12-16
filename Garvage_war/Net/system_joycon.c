@@ -19,7 +19,6 @@ void joycon_init()
     }
     else {
         printf("joycon connected");
-        DrawJoycon();
     }
 }
 

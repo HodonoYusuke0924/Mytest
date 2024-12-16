@@ -3,17 +3,17 @@ CFLAGS  = -Wall -g -DNDEBUG
 PICFLAGS = -fPIC
 LDFLAGS = -lm -lSDL2 -lSDL2_image -lSDL2_gfx -pthread -ljoyconlib -lhidapi-hidraw
 
-# ¥ª¥Ö¥¸¥§¥¯¥È¥Õ¥¡¥¤¥ë¤ÎÄêµÁ
-OBJS_SERVER = server_main.o server_net.o server_command.o
-OBJS_CLIENT = client_main.o client_net.o client_command.o client_win.o
+# ï¿½ï¿½ï¿½Ö¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¥Õ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+OBJS_SERVER = server_main.o server_net.o server_command.o server_game.o
+OBJS_CLIENT = client_main.o client_net.o client_command.o client_win.o client_game.o
 OBJS_JOYCON = system_init.o system_joycon.o system_main.o timer.o
 
-# ¥¿¡¼¥²¥Ã¥È¤ÎÄêµÁ
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¥È¤ï¿½ï¿½ï¿½ï¿½
 TARGET_SERVER = server
 TARGET_CLIENT = client
 LIB_JOYCON = libjoycon.so
 
-# ¥Ó¥ë¥É¥ë¡¼¥ë
+# ï¿½Ó¥ï¿½É¥ë¡¼ï¿½ï¿½
 .PHONY: all clean
 
 all: $(TARGET_SERVER) $(TARGET_CLIENT) $(LIB_JOYCON)

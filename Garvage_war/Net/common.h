@@ -29,7 +29,7 @@
 #define MAX_DATA		200				/* 送受信するデータの最大値 */
 
 #define END_COMMAND		'E'		  		/* プログラム終了コマンド */
-#define POSITION_COMMAND	'C'				/*座標送信コマンド */
+#define MAIN_COMMAND	'C'				/*座標送信コマンド */
 #define JOYCON_COMMAND	'R'				/* 四角表示コマンド */
 
 #endif

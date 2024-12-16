@@ -11,7 +11,7 @@
 
 static SDL_Window *gMainWindow;
 static SDL_Renderer *gMainRenderer;
-static SDL_Rect gButtonRect[MAX_CLIENTS+2];
+static SDL_Rect gButtonRect[2];
 
 static int CheckButtonNO(int x,int y,int num);
 
@@ -128,20 +128,15 @@ void WindowEvent(int num)
 					printf("WindowEvent()\n");
 					printf("Button %d is pressed\n",buttonNO);
 #endif
-					if(0<=buttonNO && buttonNO<num){
-						/* 名前の書かれたボタンが押された */
+					if(buttonNO == 0){				
 						SendMainCommand(buttonNO);
+						/*startボタンを押した*/
 					}
-					else if(buttonNO==num){
-						/* 「All」と書かれたボタンが押された */
+					else if(buttonNO == 1){
+						/*Endボタンを押した*/
 						SendEndCommand();
 					}
-					/*
-					else if(buttonNO==num+1){
-						/* 「End」と書かれたボタンが押された 
-						SendEndCommand();
-					}
-					*/
+					
 				}
 				break;
 		}
@@ -188,7 +183,7 @@ static int CheckButtonNO(int x,int y,int num)
 {
 	int i;
 
- 	for(i=0;i<num+2;i++){
+ 	for(i=0;i<2;i++){
 		if(gButtonRect[i].x < x &&
 			gButtonRect[i].y < y &&
       		gButtonRect[i].x + gButtonRect[i].w > x &&
@@ -197,9 +192,4 @@ static int CheckButtonNO(int x,int y,int num)
 		}
 	}
  	return -1;
-}
-
-void DrawJoycon(void)
-{
-	
 }
