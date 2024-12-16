@@ -15,3 +15,12 @@ void wait(int seconds)
     while(clock() < end_time);
 }
 
+// タイマー処理を行うスレッド関数
+void* timer_task(void* arg) {
+    int interval = *(int*)arg;
+    for (int i = 0; i < 5; i++) {
+        printf("Thread with interval %d executed at: %ld\n", interval, time(NULL));
+        sleep(interval);  // 指定した間隔で処理を実行
+    }
+    return NULL;
+}
