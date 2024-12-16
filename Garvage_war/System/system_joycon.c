@@ -1,3 +1,7 @@
+/*****************************************************************
+ファイル名	: system_joycon.c
+内容		: ジョイコン関連の関数
+*****************************************************************/
 #include <joyconlib.h>
 
 #include "system_struct.h"
@@ -65,9 +69,10 @@ Vector joycon_vector()
     return axis;
 }
 
+/*ジョイコンのボタンとスティック入力を読み込む*/
 Joycon_Input joycon_input()
 {
-    Joycon_Input input = {false,false,false,false,false,false, {0,0,0,}};
+    Joycon_Input input = {false,false,false,false,false,false,false, {0,0,0}};
 
     joycon_get_state(&jc);
 
@@ -89,13 +94,13 @@ Joycon_Input joycon_input()
     if(jc.button.btn.SR_r){
         input.SR = true;
     }
-
-    input.stick.vx = jc.stick.x;
-    input.stick.vy = jc.stick.y;
-    input.stick.vz = 0;
-
     if(jc.button.btn.Home){
-        mainloop = false;
+        input.Home = true;
     }
+
+    input.stick.vx = jc.stick.x * -1;
+    input.stick.vy = 0;
+    input.stick.vz = jc.stick.y * -1;
+
     return input;
 }
