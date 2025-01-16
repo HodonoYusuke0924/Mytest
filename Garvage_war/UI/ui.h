@@ -3,6 +3,9 @@
 
 #include <GL/glut.h>
 #include <pthread.h>
+#include <GL/freeglut.h>
+#include <GL/gl.h>
+#include <FreeImage.h>
 
 /*外部で扱う共有変数の宣言*/
 extern pthread_mutex_t phase_mutex;
@@ -14,6 +17,9 @@ extern float player_hp;
 void* phaseTransitionThread(void* arg);
 void initUI();
 void displayUI();
+void mouseCallback();
+void handleKeyboard(unsigned char key, int x, int y);
+void initOPenGL();
 void resize();
 void timer();
 void idle();
