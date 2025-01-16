@@ -1,59 +1,43 @@
-/*****************************************************************
-ï½¥ï??ï½¥ï½¡ï½¥ï½¤ï½¥ã?»ï½¾	: client_main.c
-ï½µï½¡ï¾?ï½?		: ï½¥ï½¯ï½¥é?£ï½¤ï½¥ï½¢ï½¥î??ï¾?ï½¤ï??ï½¥ç??ï½¤ï½¥?????»ï½¼ï½¥ï??ï½¥ã??
-*****************************************************************/
-
 #include "common.h"
 #include "client_func.h"
-#include "system_func.h" // joycon_init, joycon_end ?????????ä½¿ç??
+#include "system_func.h"
 
 int main(int argc, char *argv[]) {
     int num;
     char name[MAX_CLIENTS][MAX_NAME_SIZE];
     int endFlag = 1;
-    char localHostName[] = "localhost";
     char *serverName;
     int clientID;
 
-    // ??µã?¼ã????¼å?????è¨­å??
-    if (argc == 1) {
-        serverName = localHostName;
-    } else if (argc == 2) {
+    // ï¿½Tï¿½[ï¿½oï¿½[ï¿½ï¿½ï¿½ÌŽæ“¾
+    if (argc == 2) {
         serverName = argv[1];
     } else {
-        fprintf(stderr, "Usage: %s, Cannot find a Server Name.\n", argv[0]);
+        fprintf(stderr, "Usage: %s <server IP address>\n", argv[0]);
         return -1;
     }
 
-    // ????????¤ã?¢ã?³ã???????»ã???????¢ã?????
+    // ï¿½Nï¿½ï¿½ï¿½Cï¿½Aï¿½ï¿½ï¿½gï¿½ÌƒZï¿½bï¿½gï¿½Aï¿½bï¿½v
     if (SetUpClient(serverName, &clientID, &num, name) == -1) {
         fprintf(stderr, "setup failed : SetUpClient\n");
         return -1;
     }
 
-    // ?????£ã?³ã?????????????????
+    // GUIï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if (InitWindows(clientID, num, name) == -1) {
         fprintf(stderr, "setup failed : InitWindows\n");
         return -1;
     }
 
-        /* ¥á¥¤¥ó¥¤¥Ù¥ó¥È¥ë¡¼¥× */
-    while(endFlag){
-		WindowEvent(num);
-		endFlag = SendRecvManager();
-    };
-
-    // ??¸ã?§ã?¤ã?³ã?³ã???????????
     joycon_init();
 
+    while (endFlag) {
+        WindowEvent(num);
+        endFlag = SendRecvManager();
+    }
 
-    // ?????£ã?³ã??????????½ã?±ã????????????????¼ã?³ã?¢ã?????
     DestroyWindow();
-
-    // ??¸ã?§ã?¤ã?³ã?³ã??çµ?äº???????
     joycon_end();
-
-
     CloseSoc();
 
     return 0;

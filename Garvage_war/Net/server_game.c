@@ -1,0 +1,26 @@
+#include "common.h"
+#include "server_func.h"
+#include "system_func.h"
+#include "system_struct.h"
+#include<sys/socket.h>
+#include<netdb.h>
+
+int Flag = 1;
+
+    Player_Fixed_Info *Pinfo[MAX_CLIENTS] = {0};
+    Game_Info *Ginfo[MAX_CLIENTS] = {0};
+
+void GameMain_server(int pos)
+{
+    printf("受信検出 : %d\n", pos);
+    while (1) {
+        pos = 0;
+        for(pos; pos <= MAX_CLIENTS; pos++){
+        server_SendPlayerFixedInfo(pos, Pinfo[pos]);
+        server_RecvPlayerFixedInfo(pos, Pinfo[pos]);
+        server_SendGameInfo(pos, Ginfo[pos]);
+        server_RecvGameInfo(pos, Ginfo[pos]);
+        }
+    }
+
+}
